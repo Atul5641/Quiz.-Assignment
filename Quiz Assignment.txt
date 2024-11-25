@@ -1,0 +1,231 @@
+# Importing necessary libraries
+import sys
+
+# Database for users
+users_db = {}
+percentage=0
+
+# Quiz data for three subjects
+quizzes = {
+    "DSA": [
+        {"question": "What is the time complexity of binary search?", 
+         "options": ["1. O(n)", "2. O(log n)", "3. O(n^2)", "4. O(1)"], 
+         "answer": 2},
+
+        {"question": "Which data structure is used for BFS?", 
+         "options": ["1. Queue", "2. Stack", "3. Array", "4. Linked List"], 
+         "answer": 1},
+
+        {"question": "Which of the following sorting algorithms has the best average case time complexity?", 
+        "options": ["1. Bubble Sort", "2. Quick Sort", "3. Selection Sort", "4. Insertion Sort"], 
+        "answer": 2},
+
+        {"question": "Which of the following is not a self-balancing binary search tree?", 
+        "options": ["1. AVL Tree", "2. Red-Black Tree", "3. Binary Search Tree (BST)", "4. Splay Tree"], 
+        "answer": 3},
+
+        {"question": "5. What is the maximum number of children a node can have in a binary tree?", 
+        "options": ["1. 1", "2. 4", "3. 3", "4. 2"], 
+        "answer": 4},
+
+
+
+
+    ],
+
+    "DBMS": [
+        {"question": "What does SQL stand for?", 
+         "options": ["1. Structured Query Language", "2. Strong Query Language", "3. Simple Query Language", "4. Secure Query Language"], 
+         "answer": 1},  
+
+        {"question": "Which of the following is not a type of SQL command?", 
+         "options": ["1. DDL", "2. DML","3. TCL", "4. HTML"], 
+         "answer": 4},         
+
+        {"question": "What is the purpose of Normalization in a database?", 
+         "options": ["1. Minimize redundancy and dependency", "2. Increase the speed of queries", 
+                     "3. Enhance security", "4. Back up data regularly"], 
+         "answer": 1},
+
+        {"question": "Which of the following is a primary key in a relational database?", 
+         "options": ["1. An attribute that uniquely identifies each row in a table", "2. An attribute that refers to the primary key of another table", 
+                     "3. A non-unique attribute in a table", "4. An attribute used for indexing"], 
+         "answer": 1},
+         
+        {"question": "What is the key constraint in a database?", 
+         "options": ["1. Foreign Key", "2. Primary Key", "3. Unique Key", 
+                     "4. All of the above"], 
+         "answer": 4},
+
+    ],
+
+    "Python": [
+        {"question": "Which of the following is a mutable data type in Python?", 
+         "options": ["1. Tuple", "2. List", "3. String", "4. Int"], 
+         "answer": 2},
+
+        {"question": "What is the result of 3 ** 2 in Python", 
+         "options": ["1. 5", "2. 9", "C. 6", "4. 8"], 
+         "answer": 2},
+
+        {"question": "Which of the following functions converts a string to an integer in Python?", 
+         "options": ["1. int()", "2. str()", "3. list()", "4. float()"], 
+         "answer": 1},
+
+        {"question": "Which keyword is used to define a function in Python?", 
+         "options": ["1. func", "2. define", "3. function", "4. def"], 
+         "answer": 4},
+
+        {"question": "What is the output of len([1,2,3])?", 
+         "options": ["1. 3", "2. 2", "3. 1", "4. None"], 
+         "answer": 1},
+
+    ]
+
+}
+
+# Function to register a user
+def register():
+    print("======================================== User Registration =========================================")
+    username = input("Enter username: ")
+    if username in users_db:
+        print("Username already exists. Please try again.")
+        return False
+    
+    # Collecting 5 fields for registration
+    password = input("Enter password: ")
+    email = input("Enter email: ")
+    age = input("Enter your age: ")
+    contact_number = input("Enter your contact number: ")
+
+    # Saving user data
+    users_db[username] = {
+        "password": password,
+        "email": email,
+        "age": age,
+        "contact": contact_number,
+        "score": 0
+    }
+    print("Registration successful!\n")
+    return True
+
+# Function to login a user
+def login():
+    print("============================================ User Login ============================================")
+    username = input("Enter username: ")
+    password = input("Enter password: ")
+
+    if username in users_db and users_db[username]["password"] == password:
+        print(f"Welcome back, {username}!\n")
+        return username
+    else:
+        print("Invalid username or password. Please try again.\n")
+        return None
+
+# Function to display the quiz
+def attempt_quiz(username):
+    print("Select a quiz subject:")
+    print("1. DSA")
+    print("2. DBMS")
+    print("3. Python")
+    choice = input("Enter the subject number: ")
+
+    subject = ""
+    if choice == "1":
+        subject = "DSA"
+    elif choice == "2":
+        subject = "DBMS"
+    elif choice == "3":
+        subject = "Python"
+    else:
+        print("Invalid selection. Exiting quiz.")
+        return
+
+    score = 0
+    total_questions = len(quizzes[subject])
+
+    for i, q in enumerate(quizzes[subject], 1):
+        print(f"\nQuestion {i}: {q['question']}")
+        for option in q["options"]:
+            print(option)
+        try:
+            answer = int(input("Enter the option number: "))
+        except ValueError:
+            print("Invalid input. Skipping question.")
+            continue
+
+        if answer == q["answer"]:
+            print("Correct!")
+            score += 1
+        else:
+            print(f"Wrong! The correct answer is option {q['answer']}.")
+
+    users_db[username]["score"] = score
+    print(f"\nYou scored {score}/{total_questions} in {subject} quiz.")
+
+    percentage = (score / total_questions) * 100
+    users_db[username]["score"] = score
+    print(f"\nYou scored {score}/{total_questions} in {subject} quiz.")
+    print(f"Your percentage score is {percentage:.2f}%\n")
+
+# Function to show result
+
+
+def show_result(username):
+    score = users_db[username]['score']
+    percentage = (score / 5) * 100
+
+    print(f"\n====================================== Result for {username} =====================================")
+    print(f"Your total score: {users_db[username]['score']}\n")
+    print(f"Your percentage score is: {percentage:.2f}%\n")
+
+    print(f"*********** !!! THANK YOU !!! {username} **************\n")
+
+# Function to display menu options
+def display_menu():
+    print("###################################### !!! WELCOME TO QUIZZ COMPITION !!! #################################")
+    print("1. Register")
+    print("2. Login")
+    print("3. Exit")
+    choice = input("Enter your choice: ")
+    print("\n")
+
+    return choice
+
+# Main function to control the flow
+def main():
+    while True:
+        choice = display_menu()
+
+        if choice == "1":
+            register()
+        elif choice == "2":
+            username = login()
+            if username:
+                while True:
+                    print("1. Attempt Quiz")
+                    print("2. Show Result")
+                    print("3. Logout")
+                    quiz_choice = input("Enter your choice: ")
+                    print("\n")
+
+
+                    if quiz_choice == "1":
+                        attempt_quiz(username)
+                    elif quiz_choice == "2":
+                        show_result(username)
+                    elif quiz_choice == "3":
+                        print(f"Logging out {username}...\n")
+                        break
+                    else:
+                        print("Invalid choice. Try again.")
+        elif choice == "3":
+            print("Exiting the program...")
+            sys.exit()
+        else:
+            print("Invalid choice. Please try again.")
+
+
+# Entry point of the script
+if _name_ == "_main_":
+    main()
